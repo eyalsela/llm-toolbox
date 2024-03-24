@@ -53,9 +53,7 @@ def install_templates():
             # Update the config file with the copied template
             template_name = file.stem
             config["tools"][template_name] = str(dest_path / file.name)
-            click.echo(
-                f"{click.style(f'Installed `{template_name}` template.', fg='green')}\n"
-            )
+            click.echo(f"{click.style(f'Installed `{template_name}` template.', fg='green')}\n")
 
     # Write the updated config back to the file
     with config_file.open("w") as file:
@@ -97,10 +95,7 @@ def common_options(function):
     @click.option(
         "--tokens",
         is_flag=True,
-        help=(
-            "Count the number of tokens in the prompt, and display the cost of the"
-            " request."
-        ),
+        help=("Count the number of tokens in the prompt, and display the cost of the" " request."),
     )
     @click.option(
         "--no-stream",
@@ -182,9 +177,7 @@ def define(ctx, model, emoji, word, temperature, tokens, no_stream, raw, debug):
     """
     Get a definition for a word.
     """
-    process_command(
-        ctx, "define", model, emoji, word, temperature, tokens, no_stream, raw, debug
-    )
+    process_command(ctx, "define", model, emoji, word, temperature, tokens, no_stream, raw, debug)
 
 
 @cli.command()
@@ -195,9 +188,7 @@ def proofread(ctx, model, emoji, text, temperature, tokens, no_stream, raw, debu
     """
     Proofread a piece of text.
     """
-    process_command(
-        ctx, "proofread", model, emoji, text, temperature, tokens, no_stream, raw, debug
-    )
+    process_command(ctx, "proofread", model, emoji, text, temperature, tokens, no_stream, raw, debug)
 
 
 @cli.command()
@@ -306,9 +297,7 @@ def commitgen(ctx, model, emoji, file, temperature, tokens, no_stream, raw, debu
         return
 
     # Write commit message to a temp file
-    with tempfile.NamedTemporaryFile(
-        mode="w+", delete=False, prefix="git_commit_message_", suffix=".txt"
-    ) as temp:
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False, prefix="git_commit_message_", suffix=".txt") as temp:
         temp.write(commit_message)
         temp_path = temp.name
 
@@ -328,9 +317,7 @@ def commitgen(ctx, model, emoji, file, temperature, tokens, no_stream, raw, debu
 @click.argument("file_to_review", type=click.File("r"), required=False)
 @click.pass_context
 @common_options
-def codereview(
-    ctx, model, emoji, file_to_review, temperature, tokens, no_stream, raw, debug
-):
+def codereview(ctx, model, emoji, file_to_review, temperature, tokens, no_stream, raw, debug):
     """
     Generate a code review for a given file.
 
@@ -388,9 +375,7 @@ def summarize(ctx, model, emoji, source, temperature, tokens, no_stream, raw, de
 @click.argument("work_to_critique", nargs=-1, required=False)
 @click.pass_context
 @common_options
-def critique(
-    ctx, model, emoji, work_to_critique, temperature, tokens, no_stream, raw, debug
-):
+def critique(ctx, model, emoji, work_to_critique, temperature, tokens, no_stream, raw, debug):
     """
     Generate a critique for a given piece of work.
     """
@@ -460,18 +445,14 @@ def cheermeup(ctx, model, emoji, mood, temperature, tokens, no_stream, raw, debu
     """
     Cheer you up based on your mood.
     """
-    process_command(
-        ctx, "cheermeup", model, emoji, mood, temperature, tokens, no_stream, raw, debug
-    )
+    process_command(ctx, "cheermeup", model, emoji, mood, temperature, tokens, no_stream, raw, debug)
 
 
 @cli.command()
 @click.argument("study_material", nargs=-1, required=False)
 @click.pass_context
 @common_options
-def study(
-    ctx, model, emoji, study_material, temperature, tokens, no_stream, raw, debug
-):
+def study(ctx, model, emoji, study_material, temperature, tokens, no_stream, raw, debug):
     """
     Generate study material for a topic or from the content of the content of a file.
     """
@@ -493,9 +474,7 @@ def study(
 @click.argument("library_name", nargs=-1, required=False)
 @click.pass_context
 @common_options
-def teachlib(
-    ctx, model, emoji, library_name, temperature, tokens, no_stream, raw, debug
-):
+def teachlib(ctx, model, emoji, library_name, temperature, tokens, no_stream, raw, debug):
     """
     Teach a library.
     """
@@ -532,9 +511,7 @@ def life(ctx, reset, model, emoji, temperature, tokens, no_stream, raw, debug):
     while True:
         try:
             if user_info["date_of_birth"] is None or reset:
-                date_of_birth_str = click.prompt(
-                    "What is your date of birth? (YYYY-MM-DD)", type=str
-                )
+                date_of_birth_str = click.prompt("What is your date of birth? (YYYY-MM-DD)", type=str)
             else:
                 date_of_birth_str = user_info["date_of_birth"]
             date_of_birth = datetime.strptime(date_of_birth_str, "%Y-%m-%d")
@@ -557,9 +534,7 @@ def life(ctx, reset, model, emoji, temperature, tokens, no_stream, raw, debug):
     remaining_days = life_expectancy - (datetime.now() - date_of_birth).days
     percentage = f"{(remaining_days / life_expectancy) * 100:.2f}"
 
-    system = f"{system}".format(
-        user_name=user_name, remaining_days=remaining_days, percentage=percentage
-    )
+    system = f"{system}".format(user_name=user_name, remaining_days=remaining_days, percentage=percentage)
 
     prepare_and_generate_response(
         system=system,
@@ -590,11 +565,10 @@ def process_command(
     """
     Process a given command using a specific template and optional lines.
     """
-    match template:
-        case "summarize" | "commitgen":
-            prompt_input = "".join(prompt_input).strip()
-        case _:
-            prompt_input = " ".join(prompt_input).strip()
+    if template in ["summarize", "commitgen"]:
+        prompt_input = "".join(prompt_input).strip()
+    else:
+        prompt_input = " ".join(prompt_input).strip()
 
     if not prompt_input:
         if not sys.stdin.isatty():
